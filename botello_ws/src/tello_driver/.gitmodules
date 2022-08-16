@@ -1,0 +1,3 @@
+[submodule "src/TelloPy"]
+	path = src/TelloPy
+	url = https://github.com/hanyazou/TelloPy.git

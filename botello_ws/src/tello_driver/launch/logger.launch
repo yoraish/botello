@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="bag.name" default="$(env HOME)/tello"/>
+  <arg name="bag.topics" default="
+/rosout
+/rosout_agg
+/tello/camera/camera_info
+/tello/cmd_vel
+/tello/emergency
+/tello/fast_mode
+/tello/flattrim
+/tello/flip
+/tello/imu
+/tello/land
+/tello/manual_takeoff
+/tello/odom
+/tello/palm_land
+/tello/safety_override
+/tello/status
+/tello/takeoff
+/tello/tello_driver_node/parameter_descriptions
+/tello/tello_driver_node/parameter_updates
+/tello/throw_takeoff
+/tello/video_mode
+/tf
+/tello/image_raw/h264
+/botello/landmark
+     "/>
+<!--
+Omitted topics:
+/tello/image_raw
+/tello/image_raw/compressed
+-->
+  <node pkg="rosbag" type="record" name="rosbag_record" args="--output-prefix=$(arg bag.name) $(arg bag.topics)" output="screen" />
+</launch>

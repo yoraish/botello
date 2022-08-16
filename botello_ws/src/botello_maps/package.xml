@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>botello_maps</name>
+  <version>0.0.1</version>
+
+  <description>Map data for botello.</description>
+  <author></author>
+  <maintainer email="yorai.shaoul@gmail.com"></maintainer>
+  <license>MIT</license>
+  <url></url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <build_depend>resource_retriever</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_filters</build_depend>
+
+
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_filters</run_depend>
+  <run_depend>resource_retriever</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+
+</package>

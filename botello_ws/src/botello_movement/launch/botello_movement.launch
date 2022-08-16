@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="botello_movement" name="botello_movement_node" type="botello_movement_node" output="screen">	
+        <rosparam command="load" file="$(find botello_movement)/config/botello_movement.yaml" /> 
+	</node>
+</launch>

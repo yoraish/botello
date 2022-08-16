@@ -1,0 +1,19 @@
+manual_override_cooldown_timeout: 5.0 # Seconds between a manual override and allowing autonomous commands.
+no_goals_max_time: 1.0 # Max seconds without goals. Send stop signal after this timeout.
+pid_gains:
+  x:
+    kp: 1
+    ki: 1
+    kd: 1
+  y:
+    kp: 1
+    ki: 1
+    kd: 1
+  z:
+    kp: 1
+    ki: 1
+    kd: 1
+  yaw:
+    kp: 1
+    ki: 1
+    kd: 1

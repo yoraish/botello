@@ -1,0 +1,6 @@
+<launch>
+    <!-- <param name="/use_sim_time" value="true"></param>    -->
+    <node pkg="botello_aruco" name="botello_aruco_node" type="botello_aruco_node" output="screen">	
+        <rosparam command="load" file="$(find botello_aruco)/config/botello_aruco.yaml" /> 
+	</node>
+</launch>

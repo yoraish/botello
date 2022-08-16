@@ -1,0 +1,21 @@
+
+# Aruco Detector Parameters.
+adaptiveThreshConstant: 7 # Default: 7
+adaptiveThreshWinSizeMin: 3 # Default: 3 
+adaptiveThreshWinSizeMax: 53 # Default: 23 (aruco_detect: 53) 
+adaptiveThreshWinSizeStep: 4 # Default: 10
+cornerRefinementMaxIterations: 30 # Default: 30 
+cornerRefinementMinAccuracy: 0.01 # Default: 0.1
+cornerRefinementWinSize: 5 # Default: 5
+errorCorrectionRate: 0.6 # Default: 0.6
+minCornerDistanceRate: 0.05 # Default: 0.05
+markerBorderBits: 1 # Default: 1
+maxErroneousBitsInBorderRate: 0.04 # Default: 0.35
+minDistanceToBorder: 3 # Default: 3
+minMarkerDistanceRate: 0.05 # Default: 0.05
+minMarkerPerimeterRate: 0.1 # Default: 0.03
+maxMarkerPerimeterRate: 4.0 # Default: 4.0
+minOtsuStdDev: 5.0 # Default: 5.0
+perspectiveRemoveIgnoredMarginPerCell: 0.13 # Default: 0.13
+perspectiveRemovePixelPerCell: 8 # Default: 8
+polygonalApproxAccuracyRate: 0.01  # Default: 0.01 

@@ -1,0 +1,4 @@
+camera_frame_name: "camera"
+frequency: 30
+hist_max_stddev_in_orientation: 0.1 # Radians. The upper bound on standard deviation for orientation. The history is comprised of past pose publication requests.
+hist_max_stddev_in_position: 0.1 # Meters. The upper bound on  standard deviation for position. The history is comprised of past pose publication requests.

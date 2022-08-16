@@ -1,0 +1,11 @@
+<launch>
+    <!-- <param name="/use_sim_time" value="true" ></param> -->
+
+    <node pkg="botello_localization" name="botello_localization_node" type="botello_localization_node" output="screen">	
+        <rosparam command="load" file="$(find botello_localization)/config/botello_localization.yaml" /> 
+	</node>
+
+    <!-- Publish locations of landmarks. TODO(yoraish): move those to a yaml and publish from the node. -->
+	<node pkg="tf" type="static_transform_publisher" name="map_to_board0" output="screen" args="0 0 0 1.57 0 1.57 map board0 100" />
+
+</launch>

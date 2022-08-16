@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="botello_navigation" name="botello_navigation_node" type="botello_navigation_node" output="screen">	
+        <rosparam command="load" file="$(find botello_navigation)/config/botello_navigation.yaml" /> 
+        <param name="waypoints_yaml_path" value="$(find botello_navigation)/config/waypoints.yaml" />
+	</node>
+</launch>

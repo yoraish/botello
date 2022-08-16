@@ -1,0 +1,2 @@
+max_secs_no_odom: 3.0
+map_odom_update_interval: 0.2
