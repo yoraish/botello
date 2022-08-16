@@ -4,7 +4,7 @@ Demo video:
 
 [![Botello Waypoint Demo Video](media/video_thumbnail.png)](http://www.youtube.com/watch?v=ZArmHUcMk7o "Botello Waypoint Demo Video")
 
-This is an ongoing project in pursuit of _autonomizing_ a small Tello drone. To date (2022-04-28), the robot can localize itself with respect to a visual marker and follow waypoints. The goals of this project are:
+This is an ongoing project in pursuit of _autonomizing_ a small Tello drone. To date, the robot can localize itself with respect to visual markers and follow waypoints. The goals of this project are:
 1. Localize in a known map via landmark observations (e.g., markers, visual features, etc.).
 2. Navigate to arbitrary points on the map. Start with straightshot navigation and improve it with proper path planning in an occupancy grid.
 3. Experiment with onboard computation (Raspberry Pi Zero 2W?) for visual feature extraction and localization.
