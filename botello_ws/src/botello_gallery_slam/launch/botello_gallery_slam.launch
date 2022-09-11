@@ -1,0 +1,6 @@
+<launch>
+    <!-- <param name="/use_sim_time" value="true"></param>    -->
+    <node pkg="botello_gallery_slam" name="botello_gallery_slam_node" type="botello_gallery_slam_node" output="screen">	
+        <rosparam command="load" file="$(find botello_gallery_slam)/config/botello_gallery_slam.yaml" /> 
+	</node>
+</launch>

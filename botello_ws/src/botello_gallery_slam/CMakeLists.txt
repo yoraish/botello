@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(botello_aruco)
+project(botello_gallery_slam)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -22,8 +22,10 @@ codec_image_transport
 image_transport 
 message_runtime   
 sensor_msgs
+
 )
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -130,6 +132,7 @@ catkin_package(
     tf
   DEPENDS
   OpenCV
+  Eigen3
 )
 ###########
 ## Build ##
@@ -141,11 +144,12 @@ include_directories(
     include
     ${catkin_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
+    ${Eigen3}
 )
 
 # Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/botello_aruco.cpp
+#   src/${PROJECT_NAME}/botello_gallery_slam.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -156,7 +160,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/botello_aruco_node.cpp)
+add_executable(${PROJECT_NAME}_node src/botello_gallery_slam_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -172,6 +176,7 @@ add_executable(${PROJECT_NAME}_node src/botello_aruco_node.cpp)
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  ${Eigen3_LIBRARIES}
 )
 
 #############
@@ -221,7 +226,7 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_botello_aruco.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_botello_gallery_slam.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

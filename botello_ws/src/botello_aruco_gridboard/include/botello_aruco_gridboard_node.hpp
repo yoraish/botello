@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include<algorithm>
+#include <numeric>
 
 #include <cv_bridge/cv_bridge.h>
 #include <ros/ros.h>

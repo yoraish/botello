@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>botello_movement</name>
+  <name>botello_gallery_slam</name>
   <version>0.0.0</version>
-  <description>The botello_movement package</description>
+  <description>The botello_gallery_slam package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/botello_movement</url> -->
+  <!-- <url type="website">http://wiki.ros.org/botello_gallery_slam</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -49,9 +49,17 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>tello_driver</build_depend>
-  <exec_depend>tello_driver</exec_depend>
-
+  <depend>cv_bridge</depend>
+  <depend>geometry_msgs</depend>
+  <depend>image_transport</depend>
+  <depend>message_runtime</depend>
+  <depend>nodelet</depend>
+  <depend>pluginlib</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>opencv</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

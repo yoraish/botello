@@ -1,27 +1,27 @@
+#include <sstream>
 #include <numeric>
+#include <fstream>
 
-#include <std_msgs/Empty.h>
 #include "ros/ros.h"
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
-#include <sstream>
+#include <std_msgs/Empty.h>
 
 #include <opencv2/aruco.hpp>
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
-
 #include <opencv2/core/ocl.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 
+#include "./types.hpp"
 #pragma once
-
-namespace botello_aruco
+namespace botello_gallery_slam
 {
 
-class BotelloArucoNode
+class BotelloGallerySlamNode
 {
 private:
     // ================
@@ -34,9 +34,6 @@ private:
     // Transform broadcaster.
     tf::TransformBroadcaster mbr;
 
-    // Image transport.
-    // image_transport::ImageTransport mit;
-
     // Verbose.
     bool mVerbose;
 
@@ -44,26 +41,34 @@ private:
     bool mHaveCamInfo;
     cv::Mat mCameraMatrix;
     cv::Mat mDistortionCoeffs;
-    std::string mCamFrameId;
+    std::string mCamImageFrameId;
     std::pair<int,int> mCamImageWidthHeight; 
 
-    // Parameters for aruco detection.
-    cv::Ptr<cv::aruco::DetectorParameters> mDetectorParams = cv::aruco::DetectorParameters::create();
+    // Storage of observations.
+    std::vector<LandmarkObservation> mLandmarkObservations; 
+
+    // Keep track of the frame ID.
+    unsigned long mImageFrameId;
 
 
     // ================
     // Parameters.
     // ================
-    // Tag sizes.
     double mTagLength;
-    // Region of interest.
-    int mImageRoiBrimX;
-    int mImageRoiBrimY;
+    // Parameters for aruco detection.
+    cv::Ptr<cv::aruco::DetectorParameters> mDetectorParams = cv::aruco::DetectorParameters::create();
+
+    // Confidence values.
+    double mLandmarkObservationConfidence;
+
+    // Only track one landmark. If this is set to != -1, then this ID of landmark will be the only one reported in the dataset.
+    int mOnlyCaptureLandmarkId;
 
     // ================
     // Methods.
     // ================
     bool getParamsFromParamServer();
+    void writeDatasetToFile(const std::string & fpath = "./pose_pix_orig.txt");
 
     /**
      * Given a message, transforms observed fiducial detections to the base_link frame.
@@ -71,16 +76,11 @@ private:
     void processImage(const sensor_msgs::ImageConstPtr & msg);
 
     /**
-     * Set the camera info information from a message.
-     */
-    bool setCamInfoFromMsg(const sensor_msgs::CameraInfo::ConstPtr& msg);
-
-    /**
      * Compute tag transform from a the closest of the tags in a given corners observation (multiple observations of 4 corners).
      * See https://github.com/UbiquityRobotics/fiducials/blob/noetic-devel/aruco_detect/src/aruco_detect.cpp 
      * Return true if successful.
      */
-    bool estimatePoseClosestMarker(const std::vector<std::vector<cv::Point2f>> & corners,
+    bool estimatePoseToMarker(const std::vector<std::vector<cv::Point2f>> & corners,
                                    float markerLength,
                                    const cv::Mat &cameraMatrix,
                                    const cv::Mat &distCoeffs,
@@ -93,12 +93,21 @@ private:
      */
     void setArucoDetectorParams();
 
+    /**
+     * Optimize observations and get positions of landmarks, alongside camera poses and camera intrinsics.
+     */
+    void solveSlamProblem();
+
+
+
+
     // ================
     // Listeners.
     // ================
     // image_transport::Subscriber mImageRawSub;
     ros::Subscriber mImageRawSub;
-    ros::Subscriber mSubCamInfo;
+    ros::Subscriber mOdomSub;
+    
     // ================
     // Publishers.
     // ================
@@ -110,13 +119,11 @@ private:
     // ================
     // Process images.
     void imageCb(const sensor_msgs::ImageConstPtr& msg);
-    void camInfoCb(const sensor_msgs::CameraInfo::ConstPtr & msg);
 
 
     //***********************************
     // Utils functions
     //***********************************
-    bool getTagsLocations(); // TODO
     
     /**
     * Compute area in image of a fiducial, using Heron's formula
@@ -149,9 +156,9 @@ private:
 
 
 public:
-    BotelloArucoNode(const ros::NodeHandle & nh);
-    ~BotelloArucoNode();
+    BotelloGallerySlamNode(const ros::NodeHandle & nh);
+    ~BotelloGallerySlamNode();
 
 };
 
-} // namespace botello_aruco
+} // namespace botello_gallery_slam
