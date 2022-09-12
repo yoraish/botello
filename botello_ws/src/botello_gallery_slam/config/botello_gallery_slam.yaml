@@ -22,3 +22,4 @@ polygonalApproxAccuracyRate: 0.01  # Default: 0.01
 
 landmarkObservationConfidence: 1.0
 onlyCaptureLandmarkId: 103 # If set to a number other than -1, then this will be the only landmark that will be tracked and optimized for.
+datasetSkipFrames: 5

@@ -22,6 +22,7 @@ BotelloGallerySlamNode::BotelloGallerySlamNode(const ros::NodeHandle & nh) : mnh
     // image_transport::Subscriber mImageRawSub = mit.subscribe("/tello/image_raw", 1, BotelloGallerySlamNode::imageCb);
     
     mImageRawSub = mnh.subscribe("/tello/camera/image_raw", 1, & BotelloGallerySlamNode::imageCb, this);
+    mOdomSub = mnh.subscribe("/tello/odom", 1, & BotelloGallerySlamNode::odomCb, this);
     // mSubCamInfo = mnh.subscribe("/tello/camera/camera_info", 1, & BotelloGallerySlamNode::camInfoCb, this);
 
     // Aruco detection params.
@@ -71,6 +72,11 @@ bool BotelloGallerySlamNode::getParamsFromParamServer()
     {
         ROS_ERROR_STREAM("Failed to get parameter onlyCaptureLandmarkId from server.");
     }
+    if (!pnh.param<int>("datasetSkipFrames", mDatasetSkipFrames, 1))
+    {
+        ROS_ERROR_STREAM("Failed to get parameter datasetSkipFrames from server.");
+    }
+
     return true;
 }
 
@@ -161,6 +167,27 @@ void BotelloGallerySlamNode::setArucoDetectorParams()
 
 }
 
+
+
+void BotelloGallerySlamNode::odomCb(const nav_msgs::Odometry& msg)
+{
+    processOdom(msg);
+}
+
+void BotelloGallerySlamNode::processOdom(const nav_msgs::Odometry & msg)
+{
+    // Note(yoraish): the odom frame, in the context of mapping, will servve as the map frame too.
+    // Localization will no longer need to move odom<->map, but rather will optimize (smooth) over all poses to determine the current pose as well.
+    
+    // Create a tf::Transform from the message and store it for later use.
+    mLastBaseLinkInOdom = tf::Transform(); 
+
+    mLastBaseLinkInOdom.setOrigin(tf::Vector3(msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z ));
+    mLastBaseLinkInOdom.setRotation(tf::Quaternion(msg.pose.pose.orientation.x, msg.pose.pose.orientation.w, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w).normalized());
+}
+
+
+
 void BotelloGallerySlamNode::imageCb(const sensor_msgs::ImageConstPtr& msg)
 {
     processImage(msg);
@@ -170,19 +197,21 @@ void BotelloGallerySlamNode::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-
 void BotelloGallerySlamNode::processImage(const sensor_msgs::ImageConstPtr & msg)
 {
-    // Increment frame counter.
+    // If not enough frames skipped yet, then increment and return.
+    if (mNumFramesSkipped < mDatasetSkipFrames)
+    {
+        mNumFramesSkipped++;
+        return;
+    }
+    // Otherwise, zero out the counter and proceed to add a dataset entry.
+    mNumFramesSkipped = 0;
+
+
+    // Increment frame ID counter.
     mImageFrameId++;
     ROS_INFO_STREAM("Frame ID: " << mImageFrameId);
-    // ===========
-    // CAMERA INFO FILTER.
-    // ===========
-    // if (!mHaveCamInfo)
-    // {
-    //     return;
-    // }
 
     tf::Quaternion qFrontCamInBaselink(-0.5, 0.5, -0.5, 0.5);
     tf::Matrix3x3 rotFrontCamInBaselink(qFrontCamInBaselink);
@@ -249,7 +278,22 @@ void BotelloGallerySlamNode::processImage(const sensor_msgs::ImageConstPtr & msg
             mLandmarkObservations.emplace_back(obs); 
         }
 
-        if (mImageFrameId % 50 == 0)
+
+        // Add a database row for the current BaselinkInOdom trasformation.
+        // Create a Pose3D object for the odom guess.
+        Pose3d currentBaselinkInOdom;
+        currentBaselinkInOdom.frameId = mImageFrameId;
+        currentBaselinkInOdom.p = Eigen::Vector3d( mLastBaseLinkInOdom.getOrigin().getX(), mLastBaseLinkInOdom.getOrigin().getY(), mLastBaseLinkInOdom.getOrigin().getZ());
+        currentBaselinkInOdom.q = Eigen::Quaternion<double>(mLastBaseLinkInOdom.getRotation().getW(), mLastBaseLinkInOdom.getRotation().getX(), mLastBaseLinkInOdom.getRotation().getY(), mLastBaseLinkInOdom.getRotation().getZ());
+        
+        mBaselinkInOdomPoses.emplace_back(currentBaselinkInOdom);
+
+        // Add a database row for the odom step between the previously added image to this one.
+
+
+
+
+        if (mImageFrameId % 10 == 0)
         {
             writeDatasetToFile("/home/yoraish/code/og.txt");
         }
@@ -509,7 +553,11 @@ void BotelloGallerySlamNode::writeDatasetToFile(const std::string & fpath)
     std::ofstream outfile;
     outfile.open(fpath);
     // Start with the poses (hypothesis camera pose in the odom(world, same thing here) frame) throughout the trajectory.
-
+    for (Pose3d pose : mBaselinkInOdomPoses)
+    {
+        outfile << pose;
+        outfile << "\n"; 
+    }
     // Continue to the odometry constraints.
 
     // End with the landmark obsrvations.

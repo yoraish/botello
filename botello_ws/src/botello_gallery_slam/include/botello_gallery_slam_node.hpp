@@ -7,6 +7,7 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <std_msgs/Empty.h>
+#include <nav_msgs/Odometry.h>
 
 #include <opencv2/aruco.hpp>
 #include <image_transport/image_transport.h>
@@ -44,11 +45,21 @@ private:
     std::string mCamImageFrameId;
     std::pair<int,int> mCamImageWidthHeight; 
 
-    // Storage of observations.
+    // Storage of observations, odometry guesses (in odom frame), and odom steps (constraints).
     std::vector<LandmarkObservation> mLandmarkObservations; 
+    std::vector<Pose3d> mBaselinkInOdomPoses;
+
 
     // Keep track of the frame ID.
-    unsigned long mImageFrameId;
+    unsigned long mImageFrameId = 0;
+
+    // Count number of frames skipped. Each time that enough frames were skipped, then a frame is registered alongside with the most recent odometry reading.
+    int mNumFramesSkipped = 0;
+
+    // Recent odom pose.
+    tf::Transform mLastBaseLinkInOdom;
+
+
 
 
     // ================
@@ -64,6 +75,9 @@ private:
     // Only track one landmark. If this is set to != -1, then this ID of landmark will be the only one reported in the dataset.
     int mOnlyCaptureLandmarkId;
 
+    // Skip this number of frames between dataset updates. It is necessary to have this number be at least 1, since images are at 30Hz and odom is at 20Hz for the tello.
+    int mDatasetSkipFrames;
+
     // ================
     // Methods.
     // ================
@@ -74,6 +88,11 @@ private:
      * Given a message, transforms observed fiducial detections to the base_link frame.
      */
     void processImage(const sensor_msgs::ImageConstPtr & msg);
+
+    /**
+     * Given a message, add an odometry constraint to the dataset.
+     */
+    void processOdom(const nav_msgs::Odometry & msg);
 
     /**
      * Compute tag transform from a the closest of the tags in a given corners observation (multiple observations of 4 corners).
@@ -119,6 +138,7 @@ private:
     // ================
     // Process images.
     void imageCb(const sensor_msgs::ImageConstPtr& msg);
+    void odomCb(const nav_msgs::Odometry& msg);
 
 
     //***********************************

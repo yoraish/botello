@@ -53,12 +53,13 @@ struct Pose3d {
 inline std::ofstream& operator<<(std::ofstream& outfile, Pose3d& pose) {
     outfile << "VERTEX_SE3:QUAT " <<
     pose.frameId << " " <<
-    landmarkObs.landmarkId << " ";
-
-    for (cv::Point2f p : landmarkObs.corners)
-    {
-        outfile << p.x << " " << p.y << " ";
-    }
+    pose.p.x() << " " <<
+    pose.p.y() << " " <<
+    pose.p.z() << " " <<
+    pose.q.x() << " " <<  // TODO(yoraish): is this the correct ordering of quaternion according to g2o?
+    pose.q.y() << " " << 
+    pose.q.z() << " " << 
+    pose.q.w();
     return outfile;
 }
 
